@@ -1,0 +1,91 @@
+school.html
+
+‵‵‵html
+<!DOCTYPE html>
+<html>
+<head>
+       <title></title>
+       <meta charset="utf-8">
+    <style>
+    form{width:280px;height:160px;border:2px solid grey;
+    border-radius:6px;padding:10px;background-color:#85C1E9}
+    </style>
+
+</head>
+<body>
+        <form action="AddData.php" method="get">
+                姓名:<input type="text" name="NAME"><br>
+                學號:<input type="text" name="NUMBER"><br>
+
+                <input type="submit" value="送出資料">
+        </form>
+        <input type="button" value="查詢資料庫資料" onclick="location.href='http://192.168.2.197/show.php'">
+</body>
+</html>
+```
+
+AddData
+```php
+
+<?php
+date_default_timezone_set("asia/taipei");
+
+$dns="mysql:host=127.0.0.1;dbname=Students";
+$Name=$_GET['NAME'];
+$Number=$_GET['NUMBER'];
+
+try{
+        $db=new PDO($dns,'4060E046','raspberry');
+        $db->exec("set names utf8");
+        $sql="insert into Student(Name,Number) values('$Name','$Number');";
+        $result=$db->exec($sql);
+        if($result==1){
+                echo "新增成功";
+        }else{
+                echo "新增失敗";
+        }
+}catch(PDOException $e){
+        printf("DATABASE_ERRMESG:%s",$e->getMessage());
+}
+?>
+```
+
+show.php
+```php
+
+<html>
+<body>
+        <table border=3>
+                <tr>
+                        <th>姓名</th>
+                        <th>學號</th>
+                </tr>
+                <?php
+                        date_default_timezone_set("asia/taipei");
+                        $dsn='mysql:host=127.0.0.1;dbname=Students';
+
+                        try {
+                                $db=new PDO($dsn,'4060E046','raspberry');
+                                $db->exec("set names utf8");
+                                $sql="select * from Student;";
+                                foreach ($db->query($sql) as $row) {
+                                    echo "<tr>";
+                                    echo "      <td>".$row["Name"]."</td>";
+                                        echo "  <td>".$row["Number"]."</td>";
+                                        echo "</tr>";
+                                }
+                        } catch (PDOException $e) {
+                                printf("DATABASER_ERRMESG: %s",$e->getMessage());
+                        }
+                ?>
+        </table>
+        <input type="button" value="返回上一頁" onclick="location.href='http://192.168.2.197/school.html'">
+</body>
+</html>
+```
+
+
+
+
+
+
